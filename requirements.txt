@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+langchain
+langchain-core
+langchain-community
+langchain-chroma
+langchain-huggingface
+langchain-openrouter
+chromadb
+faiss-cpu
+sentence-transformers
+huggingface-hub
+pypdf
+python-dotenv
+tiktoken
+streamlit
