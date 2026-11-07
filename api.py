@@ -5,6 +5,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from tempfile import NamedTemporaryFile
 import os
 from main import retriever, llm, prompt, vectorstore
+import json
+from json_repair import repair_json
 
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -137,6 +139,13 @@ def generate_quiz(req: QuizRequest):
     }}
     """
 
-    response = llm.invoke(quiz_prompt)
+    for _ in range(3):
+        try:
+            reply = llm.invoke(quiz_prompt)
+            data = json.loads(repair_json(reply.content))
+            if data.get("questions"):
+                return {"quiz": json.dumps(data)}
+        except Exception as e:
+            print("Quiz attempt failed:", repr(e))
 
-    return {"quiz": response.content}
+    raise HTTPException(502, "The model returned an invalid quiz. Please try again.")
